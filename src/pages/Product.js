@@ -1,6 +1,7 @@
 // src/pages/ProductPage.js
 import React, { useEffect, useState } from "react";
 import api from "../services/api";
+import "./Product.css";
 
 const ProductPage = () => {
   const [products, setProducts] = useState([]);
@@ -11,6 +12,7 @@ const ProductPage = () => {
     lastModifiedBy: "",
   });
   const [editingProduct, setEditingProduct] = useState(null);
+  const [showDialog, setShowDialog] = useState(false);
 
   // Fetch all products
   const fetchProducts = async () => {
@@ -22,32 +24,27 @@ const ProductPage = () => {
     }
   };
 
-  // Add product
-  const addProduct = async (e) => {
+  // Add or update product
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.post("/products", newProduct);
-      setNewProduct({ skuId: "", name: "", description: "", lastModifiedBy: "" });
+      if (editingProduct) {
+        await api.put(`/products`, editingProduct);
+        setEditingProduct(null);
+      } else {
+        await api.post("/products", newProduct);
+        setNewProduct({ skuId: "", name: "", description: "", lastModifiedBy: "" });
+      }
+      setShowDialog(false);
       fetchProducts();
     } catch (err) {
-      console.error("Error adding product:", err);
-    }
-  };
-
-  // Update product
-  const updateProduct = async (e) => {
-    e.preventDefault();
-    try {
-      await api.put(`/products/${editingProduct.id}`, editingProduct);
-      setEditingProduct(null);
-      fetchProducts();
-    } catch (err) {
-      console.error("Error updating product:", err);
+      console.error("Error saving product:", err);
     }
   };
 
   // Delete product
   const deleteProduct = async (skuId) => {
+    if (!window.confirm("Are you sure you want to delete this product?")) return;
     try {
       await api.delete(`/products/${skuId}`);
       fetchProducts();
@@ -56,131 +53,132 @@ const ProductPage = () => {
     }
   };
 
+  // Open dialog for add/edit
+  const openDialogFor = (product = null) => {
+    if (product) setEditingProduct(product);
+    else setEditingProduct(null);
+    setShowDialog(true);
+  };
+
   useEffect(() => {
     fetchProducts();
   }, []);
 
   return (
-    <div className="max-w-5xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">📦 Product Management</h1>
+    <div className="product-page">
+      <h1>📦 Product Management</h1>
 
-      {/* Add / Edit Form */}
-      <form
-        onSubmit={editingProduct ? updateProduct : addProduct}
-        className="bg-white p-4 rounded-xl shadow-md mb-6"
-      >
-        <div className="grid grid-cols-2 gap-4">
-          <input
-            type="text"
-            placeholder="SKU ID"
-            value={editingProduct ? editingProduct.skuId : newProduct.skuId}
-            onChange={(e) =>
-              editingProduct
-                ? setEditingProduct({ ...editingProduct, skuId: e.target.value })
-                : setNewProduct({ ...newProduct, skuId: e.target.value })
-            }
-            className="p-2 border rounded"
-            required
-          />
-          <input
-            type="text"
-            placeholder="Name"
-            value={editingProduct ? editingProduct.name : newProduct.name}
-            onChange={(e) =>
-              editingProduct
-                ? setEditingProduct({ ...editingProduct, name: e.target.value })
-                : setNewProduct({ ...newProduct, name: e.target.value })
-            }
-            className="p-2 border rounded"
-            required
-          />
-          <input
-            type="text"
-            placeholder="Description"
-            value={editingProduct ? editingProduct.description : newProduct.description}
-            onChange={(e) =>
-              editingProduct
-                ? setEditingProduct({ ...editingProduct, description: e.target.value })
-                : setNewProduct({ ...newProduct, description: e.target.value })
-            }
-            className="p-2 border rounded"
-            required
-          />
-          <input
-            type="text"
-            placeholder="Last Modified By"
-            value={editingProduct ? editingProduct.lastModifiedBy : newProduct.lastModifiedBy}
-            onChange={(e) =>
-              editingProduct
-                ? setEditingProduct({ ...editingProduct, lastModifiedBy: e.target.value })
-                : setNewProduct({ ...newProduct, lastModifiedBy: e.target.value })
-            }
-            className="p-2 border rounded"
-            required
-          />
+      <button className="btn" onClick={() => openDialogFor()}>
+        Add Product
+      </button>
+
+      {/* Modal Dialog */}
+      {showDialog && (
+        <div className="dialog-overlay">
+          <div className="dialog">
+            <h2>{editingProduct ? "Edit Product" : "Add Product"}</h2>
+            <form onSubmit={handleSubmit}>
+              <input
+                className="input"
+                type="text"
+                placeholder="SKU ID"
+                value={editingProduct ? editingProduct.skuId : newProduct.skuId}
+                disabled={!!editingProduct}
+                onChange={(e) =>
+                  editingProduct
+                    ? setEditingProduct({ ...editingProduct, skuId: e.target.value })
+                    : setNewProduct({ ...newProduct, skuId: e.target.value })
+                }
+                required
+              />
+              <input
+                className="input"
+                type="text"
+                placeholder="Name"
+                value={editingProduct ? editingProduct.name : newProduct.name}
+                onChange={(e) =>
+                  editingProduct
+                    ? setEditingProduct({ ...editingProduct, name: e.target.value })
+                    : setNewProduct({ ...newProduct, name: e.target.value })
+                }
+                required
+              />
+              <input
+                className="input"
+                type="text"
+                placeholder="Description"
+                value={editingProduct ? editingProduct.description : newProduct.description}
+                onChange={(e) =>
+                  editingProduct
+                    ? setEditingProduct({ ...editingProduct, description: e.target.value })
+                    : setNewProduct({ ...newProduct, description: e.target.value })
+                }
+                required
+              />
+              <input
+                className="input"
+                type="text"
+                placeholder="Last Modified By"
+                value={editingProduct ? editingProduct.lastModifiedBy : newProduct.lastModifiedBy}
+                onChange={(e) =>
+                  editingProduct
+                    ? setEditingProduct({ ...editingProduct, lastModifiedBy: e.target.value })
+                    : setNewProduct({ ...newProduct, lastModifiedBy: e.target.value })
+                }
+                required
+              />
+              <div className="dialog-actions">
+                <button type="button" className="btn btn-secondary" onClick={() => setShowDialog(false)}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn">
+                  {editingProduct ? "Update" : "Save"}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-        <button
-          type="submit"
-          className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-        >
-          {editingProduct ? "Update Product" : "Add Product"}
-        </button>
-        {editingProduct && (
-          <button
-            type="button"
-            onClick={() => setEditingProduct(null)}
-            className="mt-4 ml-4 px-6 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500"
-          >
-            Cancel
-          </button>
-        )}
-      </form>
+      )}
 
-      {/* Product List */}
-      <div className="bg-white shadow-md rounded-xl p-4">
-        <h2 className="text-xl font-semibold mb-4">All Products</h2>
-        <table className="w-full border-collapse">
+      {/* Product Table */}
+      <div className="table-container">
+        <h2>All Products</h2>
+        <table className="table">
           <thead>
-            <tr className="bg-gray-100 text-left">
-              <th className="border p-2">ID</th>
-              <th className="border p-2">SKU ID</th>
-              <th className="border p-2">Name</th>
-              <th className="border p-2">Description</th>
-              <th className="border p-2">Last Modified By</th>
-              <th className="border p-2">Actions</th>
+            <tr>
+              <th>ID</th>
+              <th>SKU ID</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Last Modified By</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
+            {products.length === 0 && (
+              <tr>
+                <td colSpan="6" style={{ textAlign: "center", padding: "10px" }}>
+                  No products available.
+                </td>
+              </tr>
+            )}
             {products.map((p) => (
-              <tr key={p.id} className="hover:bg-gray-50">
-                <td className="border p-2">{p.id}</td>
-                <td className="border p-2">{p.skuId}</td>
-                <td className="border p-2">{p.name}</td>
-                <td className="border p-2">{p.description}</td>
-                <td className="border p-2">{p.lastModifiedBy}</td>
-                <td className="border p-2 flex space-x-2">
-                  <button
-                    onClick={() => setEditingProduct(p)}
-                    className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
-                  >
+              <tr key={p.id}>
+                <td>{p.id}</td>
+                <td>{p.skuId}</td>
+                <td>{p.name}</td>
+                <td>{p.description}</td>
+                <td>{p.lastModifiedBy}</td>
+                <td>
+                  <button className="btn btn-secondary" onClick={() => openDialogFor(p)}>
                     Edit
                   </button>
-                  <button
-                    onClick={() => deleteProduct(p.skuId)}
-                    className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
-                  >
+                  <button className="btn btn-danger" onClick={() => deleteProduct(p.skuId)}>
                     Delete
                   </button>
                 </td>
               </tr>
             ))}
-            {products.length === 0 && (
-              <tr>
-                <td colSpan="6" className="text-center p-4 text-gray-500">
-                  No products available.
-                </td>
-              </tr>
-            )}
           </tbody>
         </table>
       </div>
