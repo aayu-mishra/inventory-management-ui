@@ -1,16 +1,27 @@
 /* Container */
 .product-page {
-  max-width: 1100px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
-  font-family: Arial, sans-serif;
+  padding: 30px 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(180deg, #e6f0fa, #f0f4f8);
+  min-height: 100vh;
+}
+
+/* Top Branding */
+.product-page .branding {
+  font-style: italic;
+  font-size: 24px;
+  color: #2563eb;
+  margin-bottom: 20px;
 }
 
 /* Header */
 .product-page h1 {
-  font-size: 28px;
-  margin-bottom: 20px;
-  color: #333;
+  font-size: 32px;
+  font-weight: 600;
+  margin-bottom: 25px;
+  color: #1f2937;
   text-align: center;
 }
 
@@ -19,15 +30,16 @@
   background-color: #2563eb; /* blue */
   color: white;
   border: none;
-  padding: 10px 16px;
-  border-radius: 6px;
+  padding: 10px 18px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
-  transition: background 0.2s ease;
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
 
 .btn:hover {
-  background-color: #1d4ed8;
+  background-color: #1e40af;
 }
 
 .btn-danger {
@@ -46,73 +58,111 @@
   background-color: #4b5563;
 }
 
-/* Input */
+/* Input fields */
 .input {
-  padding: 8px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
+  padding: 10px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
   font-size: 14px;
   width: 100%;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .input:focus {
   outline: none;
   border-color: #2563eb;
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
 }
 
 /* Table */
+.table-container {
+  background-color: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-top: 25px;
+}
+
 .table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 20px;
+  margin-top: 15px;
 }
 
 .table th,
 .table td {
-  border: 1px solid #e5e7eb;
-  padding: 12px;
+  border: 1px solid #e2e8f0;
+  padding: 14px 12px;
   text-align: left;
   font-size: 14px;
 }
 
 .table th {
   background-color: #f3f4f6;
-  font-weight: bold;
+  font-weight: 600;
 }
 
 .table tr:nth-child(even) {
   background-color: #f9fafb;
 }
 
-/* Dialog (Modal) */
+.table tr:hover {
+  background-color: #eef2f7;
+}
+
+/* Dialog / Modal */
 .dialog-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 50;
 }
 
 .dialog {
   background: white;
-  padding: 20px;
-  border-radius: 8px;
-  width: 400px;
-  box-shadow: 0px 4px 12px rgba(0,0,0,0.2);
+  padding: 25px;
+  border-radius: 12px;
+  width: 420px;
+  box-shadow: 0px 8px 20px rgba(0,0,0,0.15);
 }
 
 .dialog h2 {
   margin-top: 0;
-  font-size: 20px;
-  margin-bottom: 12px;
+  font-size: 22px;
+  margin-bottom: 18px;
+  color: #1f2937;
 }
 
 .dialog-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
-  margin-top: 15px;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+/* Action buttons in table */
+.table td button {
+  margin-right: 10px;
+}
+
+.table td button:last-child {
+  margin-right: 0;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 18px;
+  gap: 15px;
+  font-size: 14px;
+  color: #374151;
+}
+
+.pagination button {
+  padding: 6px 14px;
 }

@@ -1,0 +1,48 @@
+.layout-container {
+  display: flex;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #e6f0fa, #f0f4f8);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 220px;
+  background-color: #2563eb;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 15px;
+}
+
+.sidebar-brand {
+  font-style: italic;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 30px;
+}
+
+.nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.nav-link {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 10px 12px;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+
+.nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Main content */
+.main-content {
+  flex: 1;
+  padding: 25px;
+}
